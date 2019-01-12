@@ -1,2 +1,2 @@
 # flask-OAuth2-starter-kit
-Starter kit with Requests-OAuthlib library. 
+Flask starter kit with Requests-OAuthlib library. 
