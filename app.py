@@ -2,7 +2,7 @@
 Flask starter kit with Requests-OAuthlib library
 Example with google login and a get request for google calendar
 '''
-from flask import Flask, session, redirect, jsonify, request
+from flask import Flask, session, redirect, request
 from requests_oauthlib import OAuth2Session
 
 import os
@@ -23,14 +23,14 @@ scope = [
     'https://www.googleapis.com/auth/calendar' #specific access given to you 
 ]
 '''
-# Fill this these out (some APIs do not require all of these)
+# Fill these out (Not all of these are required for certain APIs or more needs to be added for other APIs)
 client_id = ""
 client_secret = ""
 redirect_uri = ""
 auth_base_url = ""
 token_url = ""
 refresh_url = ""
-scope = [
+scope = [ 
     ""
 ]
 
@@ -52,19 +52,19 @@ def login():
 # Step 0: Authorize by redirecting user to OAuth provider 
 @app.route("/authorize")
 def auth():
-    theauthmachine = OAuth2Session(client_id, scope=scope, redirect_uri=redirect_uri) 
+    theauthmachine = OAuth2Session(client_id, scope=scope, redirect_uri=redirect_uri) # passes client_id, scope, and redirect_uri to auth url
     authorization_url, state = theauthmachine.authorization_url(auth_base_url, 
     access_type="offline", include_granted_scopes="true") 
-    session["state"] = state
+    session["state"] = state # state validates response to ensure that request/response originated in same browser
     return redirect(authorization_url)
-# Step 0.5: OAuth provider authorizes user and sends back user to callback URL with auth code
+# Step 0.5: OAuth provider authorizes user and sends back user to callback URL with auth code and state
 # Step 1: Get access token
 @app.route("/oauth2callback", methods=["GET"]) 
 def callback():
     theauthmachine = OAuth2Session(client_id, redirect_uri=redirect_uri, state=session['state'])
     token = theauthmachine.fetch_token(token_url, client_secret=client_secret, authorization_response=request.url)
     # token is fetched above and set to session below
-    session["credentials"] = token 
+    session["credentials"] = token # store token in session (you can also store in database)
     return redirect("/login")
 
 # Removes the token from the session
