@@ -1,4 +1,7 @@
 # flask-OAuth2-starter-kit
 Flask starter kit with Requests-OAuthlib library. 
-Required:
+# Required:
+```
 $ pip install requests requests_oauthlib
+```
+## Todo: token refresh + comments
