@@ -4,7 +4,7 @@ Example with google login and a get request for google calendar
 '''
 from flask import Flask, session, redirect, request
 from requests_oauthlib import OAuth2Session
-
+from oauthlib.oauth2 import TokenExpiredError
 import os
 
 app = Flask(__name__)
@@ -44,10 +44,14 @@ def index():
 def login():
     if "credentials" not in session:
         return redirect("authorize") # if credentials (token) is not in session, then redirect to authorize
-    any_var_name = OAuth2Session(client_id, token=session["credentials"]) # use this to make API requests
-    '''for example: google calendar's get request  
-    calendaruser_json = jsonify(any_var_name.get('https://www.googleapis.com/calendar/v3/users/me/calendarList/primary').json())
-    '''
+    try:
+        any_var_name = OAuth2Session(client_id, token=session["credentials"]) # use this to make API requests
+        '''for example: google calendar's get request  
+        calendaruser_json = jsonify(any_var_name.get('https://www.googleapis.com/calendar/v3/users/me/calendarList/primary').json())
+        '''
+    except TokenExpiredError:
+        token = any_var_name.refresh_token(refresh_url, {"client id": client_id, "client_secret": client_secret})
+        session["credentials"] = token
 
 # Step 0: Authorize by redirecting user to OAuth provider 
 @app.route("/authorize")
