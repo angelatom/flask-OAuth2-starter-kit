@@ -23,7 +23,7 @@ scope = [
     'https://www.googleapis.com/auth/calendar' #specific access given to you 
 ]
 '''
-# Fill these out (Not all of these are required for certain APIs or more needs to be added for other APIs)
+# Fill these out (Not all of these are required for certain APIs or more need to be added for other APIs)
 client_id = ""
 client_secret = ""
 redirect_uri = ""
@@ -44,14 +44,22 @@ def index():
 def login():
     if "credentials" not in session:
         return redirect("authorize") # if credentials (token) is not in session, then redirect to authorize
+    # try, except block for manual refresh 
     try:
         any_var_name = OAuth2Session(client_id, token=session["credentials"]) # use this to make API requests
         '''for example: google calendar's get request  
         calendaruser_json = jsonify(any_var_name.get('https://www.googleapis.com/calendar/v3/users/me/calendarList/primary').json())
         '''
-    except TokenExpiredError:
-        token = any_var_name.refresh_token(refresh_url, {"client id": client_id, "client_secret": client_secret})
-        session["credentials"] = token
+    except TokenExpiredError as e: # if the current token has expired, then there will be a token expired error
+        # info needed for using a refresh token for an access token
+        token = session["credentials"] 
+        extra = {
+			'client_id': client_id,
+			'client_secret': client_secret,
+		}
+        # retrieve new token
+        calendar = OAuth2Session(client_id, token=token)
+        session['credentials'] = calendar.refresh_token(refresh_url, **extra)
 
 # Step 0: Authorize by redirecting user to OAuth provider 
 @app.route("/authorize")
