@@ -2,6 +2,6 @@
 Flask starter kit with Requests-OAuthlib library. 
 # Required:
 ```
-$ pip install requests requests_oauthlib
+$ pip install requests_oauthlib
 ```
 

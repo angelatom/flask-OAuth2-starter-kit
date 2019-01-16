@@ -58,8 +58,8 @@ def login():
 			'client_secret': client_secret,
 		}
         # retrieve new token
-        calendar = OAuth2Session(client_id, token=token)
-        session['credentials'] = calendar.refresh_token(refresh_url, **extra)
+        any_var_name = OAuth2Session(client_id, token=token)
+        session['credentials'] = any_var_name.refresh_token(refresh_url, **extra)
 
 # Step 0: Authorize by redirecting user to OAuth provider 
 @app.route("/authorize")
